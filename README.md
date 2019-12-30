@@ -21,9 +21,20 @@ Docker、MongoDB、go-micro、grpc、protobuf、NATS、JWT、Postgres、Kubernet
 完整代码见github仓库，文章中的代码只会例举一些关键性的改动，方便阅读。
 
 ## 目录
-第一部分：建立consignment-cli和consignment-service服务
-第二部分：完善第一部分，添加GetConsignments方法
-第三部分：引入docker部署服务
+
+* 0.1 基本的grpc
+* 0.2 添加GetConsignments方法
+* 0.3 引入docker
+* 0.4 从grpc到go-micro
+* 0.5 增加货船服务
+* 0.6 引入docker-compose编排
+* 0.7 引入MongoDB
+* 0.8 引入user服务和Postgres
+* 0.9 引入jwt鉴权
+* 1.0 引入Pubsub订阅
+* 1.1 从Pubsub订阅到NATS
+* 1.2 开启web端交互
+* 1.3 开启api端交互
 
 ## 参考
 1. [https://github.com/Birjemin/gin-structure](https://github.com/Birjemin/gin-structure)
