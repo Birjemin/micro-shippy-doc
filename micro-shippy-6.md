@@ -1,13 +1,13 @@
-## 第六节：引入docker-compose编排
+# 第六节：引入docker-compose编排
 
-### 准备工作
+## 准备工作
 - 什么是docker编排？
 - docker编排的好处？
 
-### 开始
+## 开始
 增加docker编排，便于下一节引入MongoDB和Postgres数据库，因为下一节开始将使用docker镜像启动数据库，而不是本地安装数据库环境。
 
-#### 增加docker-compose.yml文件
+### 增加docker-compose.yml文件
 在`micro-shippy`目录下面添加`docker-compose.yml`文件
 ```
 version: '3.1'
@@ -22,7 +22,7 @@ services:
   vessel-service:
     build: ./vessel-service
 ```
-#### 测试
+### 测试
 分别在三个窗口执行下面命令（会自动拉取依赖）
 
 ```
@@ -43,7 +43,7 @@ consignment-cli窗口：
 consignment-service窗口变化：
 ![2019122818.png](./img/2019122818.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy

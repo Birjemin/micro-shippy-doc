@@ -1,6 +1,6 @@
-## 第一节：基本的gRPC
+# 第一节：基本的gRPC
 
-### 准备工作
+## 准备工作
 
 - 安装Golang、protobuf：
 ```
@@ -12,10 +12,10 @@ brew install protobuf
 - 什么是[gRPC](http://birjemin.com/wiki/tech-grpc)
 - 什么是[protobuf](https://developers.google.com/protocol-buffers/docs/overview)？
 
-### 开始
+## 开始
 第一节中，通过编写一个托运服务service、一个cli终端client，然后在cli终端中实现对托运服务的调用，带大家了解一下什么是rpc调用。
 
-#### 初始化项目
+### 初始化项目
 
 根据自己的需要初始化项目，比如：
 
@@ -25,10 +25,10 @@ cd micro-shippy
 go mod init github.com/birjemin/micro-shippy
 ```
 
-#### 建立consignment-service服务
+### 建立consignment-service服务
 `consignment-service`是托运服务，主要的功能是发起托运的动作，在后期的教程中，扮演的角色是发起托运，并在此过程中调用用户服务进行鉴权、调用货船服务获取货船信息。在这一节内容中，只是实现一下grpc调用，方便学习grpc的使用。
 
-##### 目录结构：
+#### 目录结构：
 ```
 $GOPATH/src
     └── micro-shippy
@@ -40,7 +40,7 @@ $GOPATH/src
                     └── consignment.proto
 ```
 
-##### 定义protobuf通信协议
+#### 定义protobuf通信协议
 在consignment.proto写入下面内容：
 ```
 syntax = "proto3";
@@ -74,7 +74,7 @@ message Response {
 }
 ```
 
-##### 生成协议代码
+#### 生成协议代码
 首先在Makefile文件中写入下面内容(请注意是tab，不是4个空格！！！)：
 
 ```
@@ -93,7 +93,7 @@ make build
 
 如果执行成功，则会在consignment目录中会出现一个`consignment.pb.go`文件
 
-##### 编写consignment-service服务
+#### 编写consignment-service服务
 在main.go文件中写入下面内容：
 
 ```
@@ -163,12 +163,12 @@ func main() {
     }
 }
 ```
-##### 运行consignment-service服务
+#### 运行consignment-service服务
 通过编写托运服务的代码，可以直接运行一个托运的rpc服务，接下来编写一个client终端，用于测试和校验所写的托运服务是否可以正常的工作。
 
-#### 编写consignment-cli终端
+### 编写consignment-cli终端
 
-##### 目录结构：
+#### 目录结构：
 
 ```
 $GOPATH/src
@@ -178,7 +178,7 @@ $GOPATH/src
             └── consignment.json
 ```
 
-##### 编写cli.go
+#### 编写cli.go
 
 ```
 package main
@@ -237,7 +237,7 @@ func main() {
 }
 ```
 
-##### 编写consignment.json
+#### 编写consignment.json
 这个是托运的详细数据，`cli.go`加载数据，然后调用托运服务的`CreateConsignment`方法。
 ```
 {
@@ -250,7 +250,7 @@ func main() {
 }
 ```
 
-#### 测试
+### 测试
 分别在连个窗口执行下面命令（会自动拉取依赖），如果返回`true`，则说明托运服务成功，最基本的rpc调用实现啦！
 
 ```
@@ -264,7 +264,7 @@ go run cli.go
 ```
 ![2019122804.png](./img/2019122804.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy

@@ -1,15 +1,15 @@
-## 第三节：引入docker部署服务
+# 第三节：引入docker部署服务
 
-### 准备工作
+## 准备工作
 - 什么是[Docker](http://birjemin.com/wiki/docker)?
 - Docker的基本使用姿势？
 
-### 开始
+## 开始
 引入docker部署
 
-#### 修改consignment-service配置
+### 修改consignment-service配置
 
-##### 增加Dockerfile
+#### 增加Dockerfile
 
 ```
 FROM alpine:latest
@@ -21,7 +21,7 @@ ADD consignment-service /app/consignment-service
 CMD ["./consignment-service"]
 ```
 
-##### 修改Makefile
+#### 修改Makefile
 使用的插件是grpc
 
 ```
@@ -36,7 +36,7 @@ run:
 
 当`build`运行到`doker build`时会去查找当前目录下面的Dockerfile文件，进行docker构建。
 
-#### 测试
+### 测试
 分别在两个窗口执行下面命令（会自动拉取依赖）
 
 ```
@@ -53,7 +53,7 @@ go run cli.go
 ```
 ![2019122808.png](./img/2019122808.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy

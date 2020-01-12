@@ -1,18 +1,18 @@
-## 第四节：从grpc到go-micro
+# 第四节：从grpc到go-micro
 
-### 准备工作
+## 准备工作
 - 什么是[go-micro](https://github.com/micro/go-micro)
 - 引入go-micro
 ```
 go get github.com/micro/go-micro
 ```
 
-### 开始
+## 开始
 go-micro是一个微服务框架，从这一节开始正式进入正题，将代码从grpc切换到go-micro框架上，如果对go-micro不太了解，或者对go-micro和grpc之间的关系有何区别，可以去官网查看一下它的架构和一些基本的概念。
 
-#### 修改consignment-service
+### 修改consignment-service
 
-##### 修改Makefile
+#### 修改Makefile
 使用的插件是micro
 ```
 build:
@@ -26,7 +26,7 @@ run:
 	    consignment-service
 ```
 
-##### 修改main.go中的代码
+#### 修改main.go中的代码
 
 ```
 ...
@@ -51,8 +51,8 @@ func main() {
     }
 }
 ```
-#### 修改consignment-cli
-##### 添加Makefile
+### 修改consignment-ci
+#### 添加Makefile
 
 ```
 build:
@@ -62,7 +62,7 @@ run:
 	docker run consignment-cli
 ```
 
-##### 添加Dockerfile
+#### 添加Dockerfile
 
 ```
 FROM alpine:latest
@@ -76,7 +76,7 @@ ADD consignment-cli /app/consignment-cli
 CMD ["./consignment-cli"]
 ```
 
-##### 修改cli.go文件
+#### 修改cli.go文件
 ```
 ...
 func parseFile(file string) (*pb.Consignment, error) {
@@ -118,7 +118,7 @@ func main() {
 
 ```
 
-#### 测试
+### 测试
 分别在两个窗口执行下面命令（会自动拉取依赖）
 
 ```
@@ -132,7 +132,7 @@ make run
 
 ![2019122810.png](./img/2019122810.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy

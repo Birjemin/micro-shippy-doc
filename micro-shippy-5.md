@@ -1,10 +1,10 @@
-## 第五节：引入货轮服务
+# 第五节：引入货轮服务
 
-### 开始
+## 开始
 这一节开始编写货轮服务，然后更改托运服务代码，将两者关联起来，这样就实现了托运服务和货轮服务之间的rpc调用。
 
-#### 增加vessel-service
-##### 目录结构：
+### 增加vessel-service
+#### 目录结构：
 ```
 $GOPATH/src
     └── micro-shippy
@@ -16,7 +16,7 @@ $GOPATH/src
                 └── vessel
                     └── vessel.proto
 ```
-##### 增加protobuf通信协议
+#### 增加protobuf通信协议
 在vessel.proto修改成下面内容，提供一个查找空闲货轮的方法：
 ```
 syntax = "proto3";
@@ -51,7 +51,7 @@ message Response {
 }
 ```
 
-##### 生成协议代码
+#### 生成协议代码
 
 执行命令：
 
@@ -60,7 +60,7 @@ make build
 ```
 在vessel目录中会重新生成`vessel.pb.go`文件
 
-##### 增加Makefile
+#### 增加Makefile
 ```
 build:
 	protoc -I. --go_out=plugins=micro:. \
@@ -71,7 +71,7 @@ run:
 	docker run -p 50052:50051 -e MICRO_SERVER_ADDRESS=:50051 vessel-service
 ```
 
-##### 增加Dockerfile
+#### 增加Dockerfile
 ```
 FROM alpine:latest
 
@@ -82,7 +82,7 @@ ADD vessel-service /app/vessel-service
 CMD ["./vessel-service"]
 ```
 
-##### 增加main.go代码
+#### 增加main.go代码
 ```
 package main
 
@@ -150,10 +150,10 @@ func main() {
 
 ```
 
-#### 修改consignment-service
+### 修改consignment-service
 修改托运服务的代码，在托运服务中调用货轮服务
 
-##### 修改main.go中的代码
+#### 修改main.go中的代码
 
 ```
 ...
@@ -213,8 +213,8 @@ func main() {
 }
 
 ```
-#### 修改consignment-cli
-##### 修改consignment.json
+### 修改consignment-cli
+#### 修改consignment.json
 修改托运cli的代码，增加重量和多个集装箱。
 ```
 {
@@ -228,7 +228,7 @@ func main() {
 }
 ```
 
-#### 测试
+### 测试
 分别在三个窗口执行下面命令（会自动拉取依赖）
 
 ```
@@ -249,7 +249,7 @@ consignment-cli窗口：
 consignment-service窗口变化：
 ![2019122814.png](./img/2019122814.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy

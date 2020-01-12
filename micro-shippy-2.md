@@ -1,11 +1,11 @@
-## 第二节：添加GetConsignments方法
+# 第二节：添加GetConsignments方法
 
-### 开始
+## 开始
 上一节中，托运服务只有一个创建托运的方法，这一节中给托运服务添加一个获取当前托运列表的方法，用于查看当前的托运详情。
 
 #### 修改consignment-service服务
 
-##### 修改protobuf通信协议
+#### 修改protobuf通信协议
 在`consignment.proto`中添加`GetConsignments`方法：
 ```
 syntax = "proto3";
@@ -46,7 +46,7 @@ message Response {
 }
 ```
 
-##### 重新生成协议代码
+#### 重新生成协议代码
 
 执行命令：
 
@@ -55,7 +55,7 @@ make build
 ```
 在consignment目录中会重新生成`consignment.pb.go`文件
 
-##### 修改consignment-service服务
+#### 修改consignment-service服务
 
 在main.go文件中新增GetAll方法：
 
@@ -100,9 +100,9 @@ func main() {
 }
 ```
 
-#### 修改consignment-cli访问终端
+### 修改consignment-cli访问终端
 
-##### 修改cli.go
+#### 修改cli.go
 
 ```
 func parseFile(file string) (*pb.Consignment, error) {
@@ -125,7 +125,7 @@ func main() {
 
 ```
 
-#### 测试
+### 测试
 分别在连个窗口执行下面命令（会自动拉取依赖）
 
 ```
@@ -139,7 +139,7 @@ go run cli.go
 ```
 ![2019122806.png](./img/2019122806.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy
