@@ -21,8 +21,8 @@ Docker、MongoDB、go-micro、grpc、protobuf、NATS、JWT、Postgres、gin...
 该系统主要实现了4个微服务
 - 用户服务：对用户进行创建、鉴权、授权等
 - 邮件服务：发送邮件（引入NATS订阅发送邮件，可以理解为异步调用）
-- 货船服务：查看可用的货船、创建货船等
-- 托运服务：发起货运（之间会涉及到查看可用的货船、用户鉴权）
+- 货轮服务：查看可用的货轮、创建货轮等
+- 托运服务：发起货运（之间会涉及到查看可用的货轮、用户鉴权）
 
 可以学到的知识点
 - 使用了[gin](https://github.com/gin-gonic/gin)作为Api接口开发
@@ -42,7 +42,7 @@ Docker、MongoDB、go-micro、grpc、protobuf、NATS、JWT、Postgres、gin...
 * 0.2 [添加GetConsignments方法](micro-shippy-2.md)
 * 0.3 [引入docker](micro-shippy-3.md)
 * 0.4 从grpc到go-micro
-* 0.5 增加货船服务
+* 0.5 增加货轮服务
 * 0.6 引入docker-compose编排
 * 0.7 引入MongoDB
 * 0.8 引入user服务和Postgres

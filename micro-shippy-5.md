@@ -1,6 +1,7 @@
-## 第五部分：引入货轮服务
+## 第五节：引入货轮服务
 
 ### 开始
+这一节开始编写货轮服务，然后更改托运服务代码，将两者关联起来，这样就实现了托运服务和货轮服务之间的rpc调用。
 
 #### 增加vessel-service
 ##### 目录结构：
@@ -16,7 +17,7 @@ $GOPATH/src
                     └── vessel.proto
 ```
 ##### 增加protobuf通信协议
-在vessel.proto修改成下面内容：
+在vessel.proto修改成下面内容，提供一个查找空闲货轮的方法：
 ```
 syntax = "proto3";
 
@@ -81,28 +82,89 @@ ADD vessel-service /app/vessel-service
 CMD ["./vessel-service"]
 ```
 
+##### 增加main.go代码
+```
+package main
+
+import (
+    "context"
+    "errors"
+    "fmt"
+    pb "github.com/birjemin/micro-shippy/vessel-service/proto/vessel"
+    "github.com/micro/go-micro"
+)
+
+type Repository interface {
+    FindAvailable(*pb.Specification) (*pb.Vessel, error)
+}
+
+type VesselRepository struct {
+    vessels []*pb.Vessel
+}
+
+// repository 查找可用的货轮
+func (repo *VesselRepository) FindAvailable(spec *pb.Specification) (*pb.Vessel, error) {
+    for _, vessel := range repo.vessels {
+        if spec.Capacity <= vessel.Capacity && spec.MaxWeight <= vessel.MaxWeight {
+            return vessel, nil
+        }
+    }
+    return nil, errors.New("No vessel found by that spec")
+}
+
+type service struct {
+    repo Repository
+}
+
+func (s *service) FindAvailable(ctx context.Context, req *pb.Specification, res *pb.Response) error {
+    vessel, err := s.repo.FindAvailable(req)
+    if err != nil {
+        return err
+    }
+
+    // 返回可用的货轮
+    res.Vessel = vessel
+    return nil
+}
+
+func main() {
+    // 初始化数据，服务开启时先默认增加一个可用的货轮
+    vessels := []*pb.Vessel{
+        {Id: "vessel001", Name: "Boaty McBoatface", MaxWeight: 200000, Capacity: 500},
+    }
+    repo := &VesselRepository{vessels}
+
+    srv := micro.NewService(
+        micro.Name("go.micro.srv.vessel"),
+    )
+
+    srv.Init()
+
+    // 注册货轮服务
+    pb.RegisterVesselServiceHandler(srv.Server(), &service{repo})
+
+    if err := srv.Run(); err != nil {
+        fmt.Println(err)
+    }
+}
+
+```
+
 #### 修改consignment-service
+修改托运服务的代码，在托运服务中调用货轮服务
 
 ##### 修改main.go中的代码
 
 ```
 ...
-
-// Service should implement all of the methods to satisfy the service
-// we defined in our protobuf definition. You can check the interface
-// in the generated code itself for the exact method signatures etc
-// to give you a better idea.
 type service struct {
     repo repository
     // 增加vesselClient
     vesselClient vesselProto.VesselServiceClient
 }
 
-// CreateConsignment - we created just one method on our service,
-// which is a create method, which takes a context and a request as an
-// argument, these are handled by the gRPC server.
 func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
-    // add vessel
+    // 调用货轮服务的FindAvailable方法，Capacity为集装箱数量
     vesselResponse, err := s.vesselClient.FindAvailable(context.Background(), &vesselProto.Specification{
         MaxWeight: req.Weight,
         Capacity: int32(len(req.Containers)),
@@ -111,12 +173,17 @@ func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, re
     if err != nil {
         return err
     }
-
-    // We set the VesselId as the vessel we got back from our
-    // vessel service
+    // 设置查找到的货轮Id
     req.VesselId = vesselResponse.Vessel.Id
-
-    ...
+    // 如果货轮可用，则创建托运
+    consignment, err := s.repo.Create(req)
+    if err != nil {
+        return err
+    }
+    // 创建成功
+    res.Created = true
+    res.Consignment = consignment
+    return nil
 }
 
 func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
@@ -124,8 +191,16 @@ func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest, res *
 }
 
 func main() {
-    ...
 
+    repo := &Repository{}
+
+    srv := micro.NewService(
+        // This name must match the package name given in your protobuf definition
+        micro.Name("go.micro.srv.consignment"),
+    )
+
+    srv.Init()
+    // 引入货轮服务
     vesselClient := vesselProto.NewVesselServiceClient("go.micro.srv.vessel", srv.Client())
 
     // Register handlers
@@ -140,7 +215,7 @@ func main() {
 ```
 #### 修改consignment-cli
 ##### 修改consignment.json
-
+修改托运cli的代码，增加重量和多个集装箱。
 ```
 {
   "description": "This is a test consignment",
