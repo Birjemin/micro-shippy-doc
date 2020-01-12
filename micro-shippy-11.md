@@ -1,6 +1,5 @@
 # 第十一节：从Pubsub订阅到NATS
 
-
 ## 准备工作
 - 什么是NATS？
 - 如何使用go micro自带的NATS？

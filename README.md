@@ -36,21 +36,22 @@ Docker、MongoDB、go-micro、grpc、protobuf、NATS、JWT、Postgres、gin...
 - 什么是[gRPC](http://birjemin.com/wiki/tech-grpc)?
 - ...
 
-## 目录
+- 代码：见[微服务仓库](https://github.com/Birjemin/micro-shippy)
 
+## 目录（不同tag分支）
 * 0.1 [基本的grpc](micro-shippy-1.md)
 * 0.2 [添加GetConsignments方法](micro-shippy-2.md)
 * 0.3 [引入docker](micro-shippy-3.md)
-* 0.4 从grpc到go-micro
-* 0.5 增加货轮服务
-* 0.6 引入docker-compose编排
-* 0.7 引入MongoDB
-* 0.8 引入user服务和Postgres
-* 0.9 引入jwt鉴权
-* 1.0 引入Pubsub订阅
-* 1.1 从Pubsub订阅到NATS
-* 1.2 开启web端交互
-* 1.3 开启api端交互
+* 0.4 [从grpc到go-micro](micro-shippy-4.md)
+* 0.5 [增加货轮服务](micro-shippy-5.md)
+* 0.6 [引入docker-compose编排](micro-shippy-6.md)
+* 0.7 [引入MongoDB](micro-shippy-7.md)
+* 0.8 [引入user服务和Postgres](micro-shippy-8.md)
+* 0.9 [引入jwt鉴权](micro-shippy-9.md)
+* 1.0 [引入Pubsub订阅](micro-shippy-10.md)
+* 1.1 [从Pubsub订阅到NATS](micro-shippy-11.md)
+* 1.2 [开启web端交互](micro-shippy-12.md)
+* 1.3 [开启api端交互](micro-shippy-13.md)
 
 ## 参考
 1. [https://github.com/Birjemin/gin-structure](https://github.com/Birjemin/gin-structure)

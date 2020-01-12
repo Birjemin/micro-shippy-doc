@@ -1,8 +1,9 @@
-## 第十二部分：开启web端交互
+# 第十二节：开启web端交互
 
-### 开始
+## 开始
+这一个节只是一个补充，简介go-micro的一些独有的功能。
 
-#### 修改docker-compose.yml
+### 修改docker-compose.yml
 
 ```
 version: '3.1'
@@ -17,7 +18,7 @@ version: '3.1'
 ...
 ```
 
-#### 测试
+### 测试
 
 database窗口，开启web服务
 ```

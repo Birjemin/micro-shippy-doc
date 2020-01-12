@@ -1,11 +1,14 @@
-## 第十三部分：开启api网关
+# 第十三节：开启api网关
 
-### 开始
+## 开始
+- 内容：这一节将使用docker编排所有的服务，并且使用api将各个服务之间串联起来，实现一个正常的业务。
+
+- 引入gin框架
 ```
 go get github.com/gin-gonic/gin
 ```
 
-#### 修改docker-compose.yml
+### 修改docker-compose.yml
 
 ```
 ...
@@ -18,7 +21,7 @@ go get github.com/gin-gonic/gin
 ...
 ```
 
-#### 修改user-service服务
+### 修改user-service服务
 repository.go
 ```
 ...
@@ -32,13 +35,13 @@ func (repo *UserRepository) Get(id string) (*pb.User, error) {
 ...
 ```
 
-#### 修改vessel-service服务
+### 修改vessel-service服务
 main.go文件中注释掉createDummyData方法
 
+### 修改docker-compose.yml
+忽略
 
-#### 修改docker-compose.yml
-
-#### 测试
+### 测试
 
 database窗口，开启web服务
 ```
