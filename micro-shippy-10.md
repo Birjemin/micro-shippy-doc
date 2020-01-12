@@ -1,10 +1,18 @@
-## 第十部分：引入Pubsub订阅
+# 第十节：引入Pubsub订阅
 
-### 开始
+## 准备工作
+- 什么是Pubsub订阅？
+- 如何使用go micro自带的Pubsub订阅？
 
-#### user-service服务
+## 开始
+这一节引入邮件服务，当用户服务创建一个用户时，通过Pubsub订阅的方式广播出去，邮件服务收到广播做出相应的动作。
 
-##### 修改handler.go
+### user-service服务
+注册Publisher组件，并且触发广播
+
+#### 修改handler.go
+触发广播。
+
 ```
 ...
 type service struct {
@@ -15,7 +23,7 @@ type service struct {
 ...
 func (srv *service) Create(ctx context.Context, req *pb.User, res *pb.Response) error {
     ...
-    // add publisher handle
+    // 广播 publisher handle
     if err := srv.Publisher.Publish(ctx, req); err != nil {
         return err
     }
@@ -24,20 +32,59 @@ func (srv *service) Create(ctx context.Context, req *pb.User, res *pb.Response) 
 ...
 ```
 
-##### main.go文件
+#### main.go文件
+注册Publisher广播。
+
 ```
 ...
     publisher := micro.NewPublisher("user.created", srv.Client())
-    // Register handler
+    // 注册服务
     pb.RegisterUserServiceHandler(srv.Server(), &service{repo, tokenService, publisher})
 ...
 ```
 
-#### 增加email-service服务
-##### 增加文件
-见仓库
+### 增加email-service服务
+新增一个邮件服务，邮件服务实质上就是订阅广播，处理触发的事件。
 
-#### 修改docker-compose.yml
+#### 增加main.go文件
+```
+package main
+
+import (
+    "context"
+    pb "github.com/birjemin/micro-shippy/user-service/proto/user"
+    "github.com/micro/go-micro"
+    "log"
+)
+
+const topic = "user.created"
+
+type Subscriber struct{}
+
+func (sub *Subscriber) Process(ctx context.Context, user *pb.User) error {
+    log.Println("Picked up a new message")
+    log.Println("Sending email to:", user.Name)
+    return nil
+}
+
+func main() {
+    srv := micro.NewService(
+        micro.Name("go.micro.srv.email"),
+        micro.Version("latest"),
+    )
+
+    srv.Init()
+
+    _ = micro.RegisterSubscriber(topic, srv.Server(), new(Subscriber))
+
+    // Run the server
+    if err := srv.Run(); err != nil {
+        log.Println(err)
+    }
+}
+```
+
+### 修改docker-compose.yml
 
 ```
 version: '3.1'
@@ -47,7 +94,7 @@ version: '3.1'
 ...
 ```
 
-#### 测试
+### 测试
 
 database窗口
 ```
@@ -88,7 +135,7 @@ user-service窗口变化：
 email-service窗口变化：
 ![2019122847.png](./img/2019122847.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy
