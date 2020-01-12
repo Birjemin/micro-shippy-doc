@@ -1,59 +1,54 @@
-## 第七部分：引入MongoDB
+## 第七节：引入MongoDB
+
+### 准备工作
+- 什么是[MongoDB](http://birjemin.com/wiki/tech-mongodb)？
+- 如何使用MongoDb？
 
 ### 开始
-
+引入mongodb的golang库
 ```
 go get gopkg.in/mgo.v2
 ```
 
+这一节开始代码详情见仓库对应的tag版本。
+
 #### 修改consignment-service服务
+引入mongoDB保存托运数据，发起托运时，如果货轮服务返回了可用货轮，则创建托运数据，保存到MongoDB中。
 
 ##### 增加文件
-datastore.go、handler.go、repository.go
+代码细节见仓库代码，修改的文件：datastore.go、handler.go、repository.go
 
 ##### 修改main.go
-
+引入MongoDB连接
 ```
 ...
 
 func main() {
 
-    // Database host from the environment variables
+    // 从环境变量获取host
     host := os.Getenv("DB_HOST")
 
     if host == "" {
         host = defaultHost
     }
-
+    // 创建mongodb的连接
     session, err := CreateSession(host)
-
-    // Mgo creates a 'master' session, we need to end that session
-    // before the main function closes.
     defer session.Close()
-
     if err != nil {
-
-        // We're wrapping the error returned from our CreateSession
-        // here to add some context to the error.
         log.Panicf("Could not connect to datastore with host %s - %v", host, err)
     }
 
-    // Create a new service. Optionally include some options here.
     srv := micro.NewService(
-        // This name must match the package name given in your protobuf definition
         micro.Name("go.micro.srv.consignment"),
         micro.Version("latest"),
     )
 
     vesselClient := vesselProto.NewVesselServiceClient("go.micro.srv.vessel", srv.Client())
 
-    // Init will parse the command line flags.
     srv.Init()
 
-    // Register handler
     pb.RegisterShippingServiceHandler(srv.Server(), &service{session, vesselClient})
 
-    // Run the server
     if err := srv.Run(); err != nil {
         fmt.Println(err)
     }
@@ -61,8 +56,10 @@ func main() {
 ```
 
 #### 修改vessel-service服务
+货轮服务启动时，创建货轮的数据，保存到MongoDB中，托运服务通过rpc调用查询是否有可用货轮时，处理相关逻辑，从MongoDB从查找是否存在可用的货轮，并且返回给托运服务。
 
 ##### 修改vessel.proto文件
+新增一个创建货轮的方法
 ```
 syntax = "proto3";
 
@@ -82,14 +79,15 @@ message Response {
 ```
 
 ##### 增加文件
-datastore.go、handler.go、repository.go
+代码细节见仓库代码，修改的文件：datastore.go、handler.go、repository.go
 
 ##### 修改main.go
+和托运服务的`main.go`文件类似，新增了MongoDB的连接。
 ```
 const (
     defaultHost = "localhost:27017"
 )
-
+// 测试数据
 func createDummyData(repo Repository) {
     defer repo.Close()
     vessels := []*pb.Vessel{
@@ -126,7 +124,6 @@ func main() {
 
     srv.Init()
 
-    // Register our implementation with
     pb.RegisterVesselServiceHandler(srv.Server(), &service{session})
 
     if err := srv.Run(); err != nil {
@@ -136,6 +133,7 @@ func main() {
 ```
 
 #### 修改docker-compose.yml
+引入mongo镜像，注意这里增加了一个environment参数，容器与容器之间可以通过制定容器名称+端口进行调用。
 ```
 version: '3.1'
 
@@ -158,7 +156,6 @@ services:
     ports:
       - "27017:27017"
 ```
-
 
 #### 测试
 
