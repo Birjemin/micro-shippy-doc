@@ -1,6 +1,8 @@
-## 第一部分：基本的grpc
+## 第一部分：基本的gRPC
 
 ### 准备工作
+首先可以参考这篇文章对[gRPC](http://birjemin.com/wiki/tech-grpc)有一个简单的了解
+
 安装Golang、protobuf：
 
 ```
@@ -84,6 +86,7 @@ build:
 ```sh
 make build
 ```
+
 结果（报错`Nothing to be done...`是因为我的IDE将tab转换成了4个空格，导致失败）：
 ![2019122802.png](./img/2019122802.png)
 
