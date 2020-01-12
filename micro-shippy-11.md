@@ -1,10 +1,17 @@
-## 第十一部分：从Pubsub订阅到NATS
+# 第十一节：从Pubsub订阅到NATS
 
-### 开始
 
-#### user-service服务
+## 准备工作
+- 什么是NATS？
+- 如何使用go micro自带的NATS？
+- 两者有何区别？
 
-##### 修改handler.go
+## 开始
+将订阅方式从Pubsub更改为NATS。
+
+### user-service服务
+
+#### 修改handler.go
 ```
 ...
 type service struct {
@@ -45,7 +52,7 @@ func (srv *service) publishEvent(user *pb.User) error {
 ...
 ```
 
-##### main.go文件
+#### main.go文件
 ```
 ...
     // Register handler
@@ -54,8 +61,8 @@ func (srv *service) publishEvent(user *pb.User) error {
 ...
 ```
 
-#### 修改email-service服务
-##### 修改main.go
+### 修改email-service服务
+#### 修改main.go
 ```
 ...
 func senEmail(user *pb.User) error {
@@ -103,7 +110,7 @@ func main() {
 }
 ```
 
-#### 修改docker-compose.yml
+### 修改docker-compose.yml
 
 ```
 version: '3.1'
@@ -133,7 +140,7 @@ version: '3.1'
 ...
 ```
 
-#### 测试
+### 测试
 
 database窗口
 ```
@@ -174,7 +181,7 @@ user-service窗口变化：
 email-service窗口变化：
 ![2019122852.png](./img/2019122852.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy
