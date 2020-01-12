@@ -8,6 +8,7 @@
 增加docker编排，便于下一节引入MongoDB和Postgres数据库，因为下一节开始将使用docker镜像启动数据库，而不是本地安装数据库环境。
 
 #### 增加docker-compose.yml文件
+在`micro-shippy`目录下面添加`docker-compose.yml`文件
 ```
 version: '3.1'
 
