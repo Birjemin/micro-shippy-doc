@@ -2,7 +2,37 @@
 
 ### 准备工作
 - 什么是[MongoDB](http://birjemin.com/wiki/tech-mongodb)？
-- 如何使用MongoDb？
+- 如何使用MongoDB？
+- 什么是[go-mocro服务模板](https://micro.mu/docs/cn/new.html)
+    
+    生成的模板格式如下：
+    ```
+    ├── main.go
+    ├── plugin.go
+    ├── handler
+    │   └── example.go
+    ├── subscriber
+    │   └── example.go
+    ├── proto/example
+    │   └── example.proto
+    ├── Dockerfile
+    ├── Makefile
+    └── README.md
+    ```
+    
+    可以根据自己的需求更改其结构，比如原博主更改的托运服务目录结构如下图：
+    ```
+    ├── Dockerfile
+    ├── Makefile
+    ├── datastore.go
+    ├── handler.go
+    ├── main.go
+    ├── proto
+    │   └── consignment
+    │       ├── consignment.pb.go
+    │       └── consignment.proto
+    └── repository.go
+    ```
 
 ### 开始
 引入mongodb的golang库
