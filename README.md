@@ -31,9 +31,14 @@ Docker、MongoDB、go-micro、grpc、protobuf、NATS、JWT、Postgres、gin...
 - 学习docker的编排和使用
 - ...
 
+## 需要的知识点
+- 什么是[微服务](http://birjemin.com/wiki/tech-grpc)?
+- 什么是[gRPC](http://birjemin.com/wiki/tech-grpc)?
+- ...
+
 ## 目录
 
-* 0.1 基本的grpc
+* 0.1 [基本的grpc](micro-shippy-1.md)
 * 0.2 添加GetConsignments方法
 * 0.3 引入docker
 * 0.4 从grpc到go-micro
