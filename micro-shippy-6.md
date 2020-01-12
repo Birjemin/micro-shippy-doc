@@ -1,6 +1,11 @@
-## 第六部分：引入docker-compose编排
+## 第六节：引入docker-compose编排
+
+### 准备工作
+- 什么是docker编排？
+- docker编排的好处？
 
 ### 开始
+增加docker编排，便于下一节引入MongoDB和Postgres数据库，因为下一节开始将使用docker镜像启动数据库，而不是本地安装数据库环境。
 
 #### 增加docker-compose.yml文件
 ```
