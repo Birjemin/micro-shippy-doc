@@ -1,12 +1,12 @@
-## 第二部分：添加GetConsignments方法
-
+## 第二节：添加GetConsignments方法
 
 ### 开始
+上一节中，托运服务只有一个创建托运的方法，这一节中给托运服务添加一个获取当前托运列表的方法，用于查看当前的托运详情。
 
 #### 修改consignment-service服务
 
 ##### 修改protobuf通信协议
-在consignment.proto修改成下面内容：
+在`consignment.proto`中添加`GetConsignments`方法：
 ```
 syntax = "proto3";
 
@@ -46,7 +46,7 @@ message Response {
 }
 ```
 
-##### 生成协议代码
+##### 重新生成协议代码
 
 执行命令：
 
@@ -67,34 +67,24 @@ type repository interface {
     GetAll() []*pb.Consignment
 }
 
-// Repository - Dummy repository, this simulates the use of a datastore
-// of some kind. We'll replace this with a real implementation later on.
 type Repository struct {
     mu           sync.RWMutex
     consignments []*pb.Consignment
 }
 
-// Create a new consignment
 func (repo *Repository) Create(consignment *pb.Consignment) (*pb.Consignment, error) {
     ...
 }
 
-// GetAll consignments
+// repository 获取托运数据，这一节中直接返回提交的托运数据，不作任何其他处理
 func (repo *Repository) GetAll() []*pb.Consignment {
     return repo.consignments
 }
 
-// Service should implement all of the methods to satisfy the service
-// we defined in our protobuf definition. You can check the interface
-// in the generated code itself for the exact method signatures etc
-// to give you a better idea.
 type service struct {
     repo repository
 }
 
-// CreateConsignment - we created just one method on our service,
-// which is a create method, which takes a context and a request as an
-// argument, these are handled by the gRPC server.
 func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment) (*pb.Response, error) {
     ...
 }
@@ -106,14 +96,11 @@ func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest) (*pb.
 }
 
 func main() {
-
     ...
 }
-
 ```
 
 #### 修改consignment-cli访问终端
-##### 目录结构：
 
 ##### 修改cli.go
 
@@ -126,12 +113,7 @@ func main() {
     // Set up a connection to the server.
     ...
 
-    r, err := client.CreateConsignment(context.Background(), consignment)
-    if err != nil {
-        log.Fatalf("Could not greet: %v", err)
-    }
-    log.Printf("Created: %t", r.Created)
-
+    // 获取货运信息
     getAll, err := client.GetConsignments(context.Background(), &pb.GetRequest{})
     if err != nil {
         log.Fatalf("Could not list consignments: %v", err)

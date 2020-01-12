@@ -1,4 +1,4 @@
-## 第一部分：基本的gRPC
+## 第一节：基本的gRPC
 
 ### 准备工作
 
@@ -13,6 +13,7 @@ brew install protobuf
 - 什么是[protobuf](https://developers.google.com/protocol-buffers/docs/overview)？
 
 ### 开始
+第一节中，通过编写一个托运服务service、一个cli终端client，然后在cli终端中实现对托运服务的调用，带大家了解一下什么是rpc调用。
 
 #### 初始化项目
 
@@ -42,35 +43,35 @@ $GOPATH/src
 ##### 定义protobuf通信协议
 在consignment.proto写入下面内容：
 ```
-    syntax = "proto3";
+syntax = "proto3";
 
-    package consignment;
+package consignment;
 
-    // 货轮服务
-    service ShippingService {
-        // 托运货物
-        rpc CreateConsignment(Consignment) returns (Response) {}
-    }
-    // 货物属性（id、描述、重量、包含的集装箱、货船id）
-    message Consignment {
-        string id = 1;
-        string description = 2;
-        int32 weight = 3;
-        repeated Container containers = 4;
-        string vessel_id = 5;
-    }
-    // 单个集装箱（id、客户id、来源、用户id）
-    message Container {
-        string id = 1;
-        string customer_id = 2;
-        string origin = 3;
-        string user_id = 4;
-    }
-    // 托运结果（托运结果，托运货物）
-    message Response {
-        bool created = 1;
-        Consignment consignment = 2;
-    }
+// 货轮服务
+service ShippingService {
+    // 托运货物
+    rpc CreateConsignment(Consignment) returns (Response) {}
+}
+// 货物属性（id、描述、重量、包含的集装箱、货船id）
+message Consignment {
+    string id = 1;
+    string description = 2;
+    int32 weight = 3;
+    repeated Container containers = 4;
+    string vessel_id = 5;
+}
+// 单个集装箱（id、客户id、来源、用户id）
+message Container {
+    string id = 1;
+    string customer_id = 2;
+    string origin = 3;
+    string user_id = 4;
+}
+// 托运结果（托运结果，托运货物）
+message Response {
+    bool created = 1;
+    Consignment consignment = 2;
+}
 ```
 
 ##### 生成协议代码
@@ -165,7 +166,7 @@ func main() {
 ##### 运行consignment-service服务
 通过编写托运服务的代码，可以直接运行一个托运的rpc服务，接下来编写一个client终端，用于测试和校验所写的托运服务是否可以正常的工作。
 
-#### 编写consignment-cli访问终端
+#### 编写consignment-cli终端
 
 ##### 目录结构：
 
@@ -180,8 +181,31 @@ $GOPATH/src
 ##### 编写cli.go
 
 ```
+package main
+
+import (
+    "context"
+    "encoding/json"
+    pb "github.com/birjemin/micro-shippy/consignment-service/proto/consignment"
+    "google.golang.org/grpc"
+    "io/ioutil"
+    "log"
+    "os"
+)
+
+const (
+    address         = "localhost:50051"
+    defaultFilename = "consignment.json"
+)
+
 func parseFile(file string) (*pb.Consignment, error) {
-    ...
+    var consignment *pb.Consignment
+    data, err := ioutil.ReadFile(file)
+    if err != nil {
+        return nil, err
+    }
+    json.Unmarshal(data, &consignment)
+    return consignment, err
 }
 
 func main() {
