@@ -1,6 +1,6 @@
-## 第七节：引入MongoDB
+# 第七节：引入MongoDB
 
-### 准备工作
+## 准备工作
 - 什么是[MongoDB](http://birjemin.com/wiki/tech-mongodb)？
 - 如何使用MongoDB？
 - 什么是[go-mocro服务模板](https://micro.mu/docs/cn/new.html)
@@ -34,7 +34,7 @@
     └── repository.go
     ```
 
-### 开始
+## 开始
 引入mongodb的golang库
 ```
 go get gopkg.in/mgo.v2
@@ -42,13 +42,13 @@ go get gopkg.in/mgo.v2
 
 这一节开始代码详情见仓库对应的tag版本。
 
-#### 修改consignment-service服务
+### 修改consignment-service服务
 引入mongoDB保存托运数据，发起托运时，如果货轮服务返回了可用货轮，则创建托运数据，保存到MongoDB中。
 
-##### 增加文件
+#### 增加文件
 代码细节见仓库代码，修改的文件：datastore.go、handler.go、repository.go
 
-##### 修改main.go
+#### 修改main.go
 引入MongoDB连接
 ```
 ...
@@ -85,10 +85,10 @@ func main() {
 }
 ```
 
-#### 修改vessel-service服务
+### 修改vessel-service服务
 货轮服务启动时，创建货轮的数据，保存到MongoDB中，托运服务通过rpc调用查询是否有可用货轮时，处理相关逻辑，从MongoDB从查找是否存在可用的货轮，并且返回给托运服务。
 
-##### 修改vessel.proto文件
+#### 修改vessel.proto文件
 新增一个创建货轮的方法
 ```
 syntax = "proto3";
@@ -108,10 +108,10 @@ message Response {
 }
 ```
 
-##### 增加文件
+#### 增加文件
 代码细节见仓库代码，修改的文件：datastore.go、handler.go、repository.go
 
-##### 修改main.go
+#### 修改main.go
 和托运服务的`main.go`文件类似，新增了MongoDB的连接。
 ```
 const (
@@ -162,7 +162,7 @@ func main() {
 }
 ```
 
-#### 修改docker-compose.yml
+### 修改docker-compose.yml
 引入mongo镜像，注意这里增加了一个environment参数，容器与容器之间可以通过制定容器名称+端口进行调用。
 ```
 version: '3.1'
@@ -187,7 +187,7 @@ services:
       - "27017:27017"
 ```
 
-#### 测试
+### 测试
 
 datastore窗口
 ```
@@ -237,7 +237,7 @@ consignment-service窗口变化：
 ![2019122829.png](./img/2019122829.png)
 
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy
