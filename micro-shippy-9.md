@@ -1,14 +1,20 @@
-## 第九部分：引入jwt鉴权
+# 第九节：引入jwt鉴权
 
-### 开始
+## 准备工作
+- 什么是jwt鉴权？
 
+## 开始
+引入jwt的golang库：
 ```
 go get github.com/dgrijalva/jwt-go
 ```
+该节代码量有点多，调试也有点麻烦。
 
-#### user-service服务
+### user-service服务
+为了引入jwt鉴权，需要将第八节的用户服务完善。
 
-##### 修改handler.go
+#### 修改handler.go
+完善授权和鉴权的方法。
 ```
 ...
 func (srv *service) Auth(ctx context.Context, req *pb.User, res *pb.Token) error {
@@ -19,8 +25,6 @@ func (srv *service) Auth(ctx context.Context, req *pb.User, res *pb.Token) error
         return err
     }
 
-    // Compares our given password against the hashed password
-    // stored in the database
     if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
         return err
     }
@@ -38,7 +42,7 @@ func (srv *service) ValidateToken(ctx context.Context, req *pb.Token, res *pb.To
     if req.Token == "" {
         return errors.New("token invalid")
     }
-    // Decode token
+    // 解密
     claims, err := srv.tokenService.Decode(req.Token)
     if err != nil {
         return err
@@ -56,7 +60,7 @@ func (srv *service) ValidateToken(ctx context.Context, req *pb.Token, res *pb.To
 }
 ```
 
-##### 修改repository.go文件
+#### 修改repository.go文件
 ```
 ...
 func (repo *UserRepository) GetByEmail(email string) (*pb.User, error) {
@@ -70,22 +74,77 @@ func (repo *UserRepository) GetByEmail(email string) (*pb.User, error) {
 ...
 ```
 
-##### 修改token_service.go文件
+#### 修改token_service.go文件
+省略
+
+### 修改user-cli访问终端
+#### 修改cli.go
 ```
-...
+package main
+
+import (
+    pb "github.com/birjemin/micro-shippy/user-service/proto/user"
+    microclient "github.com/micro/go-micro/client"
+    "github.com/micro/go-micro/config/cmd"
+    "golang.org/x/net/context"
+    "log"
+    "os"
+)
+
+func main() {
+
+    cmd.Init()
+
+    client := pb.NewUserServiceClient("go.micro.srv.user", microclient.DefaultClient)
+    // 先直接写死一个用户
+    name := "Ewan Valentine"
+    email := "ewan.valentine89@gmail.com"
+    password := "test123"
+    company := "BBC"
+
+    log.Println(name, email, password)
+
+    r, err := client.Create(context.TODO(), &pb.User{
+        Name:     name,
+        Email:    email,
+        Password: password,
+        Company:  company,
+    })
+    if err != nil {
+        log.Fatalf("Could not create user: %v", err)
+    }
+    log.Printf("Created: %s", r.User.Id)
+
+    getAll, err := client.GetAll(context.Background(), &pb.Request{})
+    if err != nil {
+        log.Fatalf("Could not list users: %v", err)
+    }
+    for _, v := range getAll.Users {
+        log.Println(v)
+    }
+
+    authResponse, err := client.Auth(context.TODO(), &pb.User{
+        Email:    email,
+        Password: password,
+    })
+
+    if err != nil {
+        log.Fatalf("Could not authenticate user: %s error: %v\n", email, err)
+    }
+
+    log.Printf("Your access token is: %s \n", authResponse.Token)
+    os.Exit(0)
+}
 ```
 
-#### 修改user-cli访问终端
-##### 修改cli.go
-```
-...
-```
+### 修改consignment-service
+给托运服务增加授权功能。
 
-#### 修改consignment-service
-##### 修改main.go
+#### 修改main.go
 ```
 ...
 
+// 授权中间件
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
     return func(ctx context.Context, req server.Request, resp interface{}) error {
         meta, ok := metadata.FromContext(ctx)
@@ -95,7 +154,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
         token := meta["Token"]
         log.Println("Authenticating with token: ", token)
 
-        // Auth here
+        // 授权
         authClient := userService.NewUserServiceClient("go.micro.srv.user", client.DefaultClient)
         authResp, err := authClient.ValidateToken(ctx, &userService.Token{
             Token: token,
@@ -112,11 +171,12 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 }
 ```
 
-#### 修改consignment-cli
-##### 修改cli.go
+### 修改consignment-cli
+托运cli增加token入口，避免将token写死，无法调试。
+
+#### 修改cli.go
 ```
 ...
-
     ctx := metadata.NewContext(context.Background(), map[string]string{
         "token": token,
     })
@@ -137,7 +197,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 ...
 ```
 
-#### 测试
+### 测试
 
 database窗口
 ```
@@ -199,7 +259,7 @@ TOKEN=xxx docker-compose run user-service
 此时MongoDB中会生成一条数据（货运数据）：
 ![2019122842.png](./img/2019122842.png)
 
-#### 当前的文件目录
+### 当前的文件目录
 ```
 $GOPATH/src
     └── micro-shippy
