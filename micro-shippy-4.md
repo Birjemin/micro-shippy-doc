@@ -1,15 +1,19 @@
-## 第四部分：从grpc到go-micro
+## 第四节：从grpc到go-micro
 
-### 开始
-
+### 准备工作
+- 什么是[go-micro](https://github.com/micro/go-micro)
+- 引入go-micro
 ```
 go get github.com/micro/go-micro
 ```
 
+### 开始
+go-micro是一个微服务框架，从这一节开始正式进入正题，将代码从grpc切换到go-micro框架上，如果对go-micro不太了解，或者对go-micro和grpc之间的关系有何区别，可以去官网查看一下它的架构和一些基本的概念。
+
 #### 修改consignment-service
 
 ##### 修改Makefile
-
+使用的插件是micro
 ```
 build:
 	protoc -I. --go_out=plugins=micro:. \
@@ -26,67 +30,26 @@ run:
 
 ```
 ...
-
-type repository interface {
-    Create(*pb.Consignment) (*pb.Consignment, error)
-    GetAll() []*pb.Consignment
-}
-
-// Repository - Dummy repository, this simulates the use of a datastore
-// of some kind. We'll replace this with a real implementation later on.
-type Repository struct {
-    consignments []*pb.Consignment
-}
-
-func (repo *Repository) Create(consignment *pb.Consignment) (*pb.Consignment, error) {
-    ...
-}
-
-func (repo *Repository) GetAll() []*pb.Consignment {
-    return repo.consignments
-}
-
-// Service should implement all of the methods to satisfy the service
-// we defined in our protobuf definition. You can check the interface
-// in the generated code itself for the exact method signatures etc
-// to give you a better idea.
-type service struct {
-    repo repository
-}
-
-// CreateConsignment - we created just one method on our service,
-// which is a create method, which takes a context and a request as an
-// argument, these are handled by the gRPC server.
-func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
-    ...
-}
-
-func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
-    ...
-}
-
 func main() {
-
     repo := &Repository{}
 
-    // Create a new service. Optionally include some options here.
+    // 创建服务
     srv := micro.NewService(
         // This name must match the package name given in your protobuf definition
         micro.Name("go.micro.srv.consignment"),
     )
 
-    // Init will parse the command line flags.
+    // 处理化
     srv.Init()
 
-    // Register handler
+    // 注册Handler
     pb.RegisterShippingServiceHandler(srv.Server(), &service{repo})
 
-    // Run the server
+    // 运行服务
     if err := srv.Run(); err != nil {
         fmt.Println(err)
     }
 }
-
 ```
 #### 修改consignment-cli
 ##### 添加Makefile
@@ -126,7 +89,7 @@ func main() {
 
     client := pb.NewShippingServiceClient("go.micro.srv.consignment", service.Client())
 
-    // Contact the server and print out its response.
+    // 可忽略这几行代码
     file := defaultFilename
     if len(os.Args) > 1 {
         file = os.Args[1]

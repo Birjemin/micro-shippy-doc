@@ -17,11 +17,12 @@ FROM alpine:latest
 RUN mkdir /app
 WORKDIR /app
 ADD consignment-service /app/consignment-service
-
+# 运行服务
 CMD ["./consignment-service"]
 ```
 
 ##### 修改Makefile
+使用的插件是grpc
 
 ```
 build:
