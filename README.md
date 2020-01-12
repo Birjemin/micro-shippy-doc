@@ -39,8 +39,8 @@ Docker、MongoDB、go-micro、grpc、protobuf、NATS、JWT、Postgres、gin...
 ## 目录
 
 * 0.1 [基本的grpc](micro-shippy-1.md)
-* 0.2 添加GetConsignments方法
-* 0.3 引入docker
+* 0.2 [添加GetConsignments方法](micro-shippy-2.md)
+* 0.3 [引入docker](micro-shippy-3.md)
 * 0.4 从grpc到go-micro
 * 0.5 增加货船服务
 * 0.6 引入docker-compose编排

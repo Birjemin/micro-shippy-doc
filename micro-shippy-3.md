@@ -1,6 +1,11 @@
-## 第三部分：引入docker部署服务
+## 第三节：引入docker部署服务
+
+### 准备工作
+- 什么是[Docker](http://birjemin.com/wiki/docker)?
+- Docker的基本使用姿势？
 
 ### 开始
+引入docker部署
 
 #### 修改consignment-service配置
 
